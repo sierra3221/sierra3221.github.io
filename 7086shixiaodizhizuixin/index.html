@@ -1,0 +1,1302 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>7086失效地址最新-地址检测与失效排查指南</title>
+<meta name="description" content="7086失效地址最新排查手册：整理地址跳转失效、链接提示异常、节点不可用的判断方法，含检测步骤、状态对照表、常见问答与本周更新记录，帮助快速确认失效原因。">
+<meta name="keywords" content="7086失效地址最新">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231f4d43'/%3E%3Cpath d='M18 40V24h6l8 9 8-9h6v16h-6v-7l-8 8-8-8v7z' fill='%23f2c14e'/%3E%3C/svg%3E">
+<style>
+:root{
+  --ink:#182220;
+  --ink-2:#39433f;
+  --muted:#6b7772;
+  --line:#dfe4de;
+  --line-strong:#c4cdc3;
+  --paper:#f7f8f4;
+  --card:#ffffff;
+  --brand:#1f4d43;
+  --brand-2:#2f6b5c;
+  --brand-soft:#e6efe9;
+  --accent:#c8901f;
+  --accent-soft:#fbf1da;
+  --danger:#a5432f;
+  --danger-soft:#fbe9e4;
+  --radius:10px;
+  --radius-lg:16px;
+  --shadow:0 1px 2px rgba(24,34,32,.06),0 8px 24px -16px rgba(24,34,32,.28);
+  --shadow-hover:0 2px 4px rgba(24,34,32,.08),0 14px 30px -18px rgba(24,34,32,.35);
+  --sp-1:6px; --sp-2:12px; --sp-3:18px; --sp-4:26px; --sp-5:38px; --sp-6:56px;
+  --fs-xs:.75rem; --fs-s:.83rem; --fs-b:.95rem; --fs-m:1.03rem;
+  --fs-h3:1.12rem; --fs-h2:1.45rem; --fs-h1:2.5rem;
+  --ann-h:0px;
+  --ff:"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Source Han Sans SC",system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:calc(var(--ann-h) + 66px)}
+body{
+  margin:0;background:var(--paper);color:var(--ink);
+  font-family:var(--ff);font-size:var(--fs-m);line-height:1.8;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4{margin:0;line-height:1.35;font-weight:700;letter-spacing:.01em}
+p{margin:0 0 var(--sp-3)}
+ul,ol{margin:0 0 var(--sp-3);padding-left:1.25em}
+li{margin-bottom:6px}
+a{color:var(--brand-2);text-decoration:none}
+a:hover{text-decoration:underline}
+a:focus-visible,button:focus-visible,summary:focus-visible,input:focus-visible{
+  outline:2px solid var(--accent);outline-offset:2px;border-radius:4px;
+}
+img{max-width:100%;display:block}
+button{font-family:inherit}
+
+/* ============ 公告条 + 页头 吸顶 ============ */
+.stick-wrap{position:sticky;top:0;z-index:60}
+.announce{
+  background:var(--brand);color:#eaf3ee;font-size:var(--fs-s);
+  padding:8px 0;border-bottom:1px solid rgba(255,255,255,.14);
+}
+.announce-in{
+  max-width:1220px;margin:0 auto;padding:0 var(--sp-3);
+  display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+}
+.announce strong{color:#fff}
+.announce .tag{
+  background:var(--accent);color:#2a1c00;font-weight:700;
+  padding:1px 8px;border-radius:999px;font-size:var(--fs-xs);letter-spacing:.04em;
+}
+.announce .dot{width:6px;height:6px;border-radius:50%;background:var(--accent);flex:none}
+
+.site-head{
+  background:rgba(255,255,255,.96);backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line);box-shadow:0 2px 10px -8px rgba(24,34,32,.4);
+}
+.head-in{
+  max-width:1220px;margin:0 auto;padding:10px var(--sp-3);
+  display:flex;align-items:center;gap:var(--sp-3);
+}
+.brand{display:flex;align-items:center;gap:10px;flex:none}
+.brand-mark{width:38px;height:38px;flex:none}
+.brand-txt{display:flex;flex-direction:column;line-height:1.2}
+.brand-name{font-size:1.02rem;font-weight:800;color:var(--brand);letter-spacing:.02em}
+.brand-sub{font-size:var(--fs-xs);color:var(--muted);letter-spacing:.08em}
+.head-nav{margin-left:auto;display:flex;align-items:center;gap:2px;flex-wrap:wrap}
+.head-nav a{
+  font-size:var(--fs-s);color:var(--ink-2);padding:7px 10px;border-radius:6px;white-space:nowrap;
+}
+.head-nav a:hover{background:var(--brand-soft);text-decoration:none;color:var(--brand)}
+.head-tools{display:flex;align-items:center;gap:8px;flex:none;margin-left:8px}
+.search-box{position:relative;display:flex;align-items:center}
+.search-box input{
+  width:170px;padding:7px 10px 7px 30px;border:1px solid var(--line-strong);
+  border-radius:999px;font-size:var(--fs-s);background:#fbfcfa;color:var(--ink);
+  transition:width .18s ease,border-color .18s ease;
+}
+.search-box input:focus{width:210px;border-color:var(--brand-2);background:#fff}
+.search-box svg{position:absolute;left:9px;width:14px;height:14px;color:var(--muted);pointer-events:none}
+.search-res{
+  position:absolute;top:calc(100% + 6px);right:0;width:290px;background:#fff;
+  border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);
+  padding:8px;font-size:var(--fs-s);display:none;max-height:300px;overflow:auto;z-index:70;
+}
+.search-res.on{display:block}
+.search-res a{display:block;padding:6px 8px;border-radius:6px;color:var(--ink-2)}
+.search-res a:hover{background:var(--brand-soft);text-decoration:none}
+.search-res .empty{color:var(--muted);padding:8px;line-height:1.6}
+.menu-btn{
+  display:none;background:#fff;border:1px solid var(--line-strong);border-radius:8px;
+  padding:7px 9px;cursor:pointer;color:var(--ink-2);
+}
+.menu-btn svg{width:18px;height:18px;display:block}
+
+@media (max-width:1020px){
+  .head-nav{
+    position:absolute;left:0;right:0;top:100%;background:#fff;border-bottom:1px solid var(--line);
+    flex-direction:column;align-items:stretch;padding:8px var(--sp-3) 14px;display:none;
+    box-shadow:var(--shadow);max-height:76vh;overflow:auto;
+  }
+  .head-nav.open{display:flex}
+  .head-nav a{padding:10px 8px;border-radius:6px;border-bottom:1px dashed var(--line)}
+  .menu-btn{display:block}
+  .head-in{position:relative;flex-wrap:wrap}
+  .head-tools{margin-left:0;order:3}
+  .search-box input{width:130px}
+  .search-box input:focus{width:160px}
+}
+
+/* ============ 首屏 ============ */
+.hero{
+  position:relative;overflow:hidden;
+  background:
+    radial-gradient(1100px 400px at 88% -8%, #264f44 0%, transparent 62%),
+    linear-gradient(160deg,#1b4038 0%,#20483f 46%,#173a33 100%);
+  color:#eef4ef;
+}
+.hero-in{
+  max-width:1220px;margin:0 auto;padding:var(--sp-6) var(--sp-3) calc(var(--sp-6) + 8px);
+  display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:var(--sp-5);
+  align-items:center;position:relative;z-index:2;
+}
+.hero-kicker{
+  display:inline-flex;align-items:center;gap:8px;font-size:var(--fs-xs);
+  letter-spacing:.16em;color:#a8c6b6;border:1px solid rgba(168,198,182,.35);
+  padding:4px 12px;border-radius:999px;margin-bottom:var(--sp-3);
+}
+.hero h1{
+  font-size:var(--fs-h1);line-height:1.25;letter-spacing:.01em;color:#fff;
+  margin-bottom:var(--sp-3);
+}
+.hero h1 em{font-style:normal;color:var(--accent)}
+.hero-lead{font-size:1.02rem;color:#c9dcd1;max-width:40em;margin-bottom:var(--sp-4)}
+.hero-lead strong{color:#fff;font-weight:700}
+.hero-cta{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:var(--sp-4)}
+.btn{
+  display:inline-flex;align-items:center;gap:8px;padding:11px 20px;border-radius:8px;
+  font-size:var(--fs-b);font-weight:600;border:1px solid transparent;cursor:pointer;
+  transition:transform .15s ease,box-shadow .15s ease,background .15s ease;
+}
+.btn-primary{background:var(--accent);color:#2b1e00;box-shadow:0 6px 18px -8px rgba(200,144,31,.9)}
+.btn-primary:hover{transform:translateY(-2px);text-decoration:none}
+.btn-ghost{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.3);color:#eaf3ee}
+.btn-ghost:hover{background:rgba(255,255,255,.13);transform:translateY(-2px);text-decoration:none}
+.hero-stats{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:var(--sp-2);
+  border-top:1px solid rgba(255,255,255,.16);padding-top:var(--sp-3);max-width:560px;
+}
+.hero-stats div{display:flex;flex-direction:column;gap:2px}
+.hero-stats b{font-size:1.32rem;color:#fff;font-variant-numeric:tabular-nums}
+.hero-stats span{font-size:var(--fs-xs);color:#9dbbac;letter-spacing:.05em}
+
+/* 首屏原创视觉：地址状态光谱 */
+.hero-visual{position:relative;height:100%;min-height:320px;display:flex;align-items:center;justify-content:center}
+.hero-visual svg{width:100%;max-width:430px;height:auto;filter:drop-shadow(0 20px 40px rgba(0,0,0,.35))}
+@media (max-width:900px){
+  .hero-in{grid-template-columns:1fr;padding-top:var(--sp-5)}
+  .hero h1{font-size:1.95rem}
+  .hero-visual{min-height:0;margin-top:var(--sp-3)}
+  .hero-visual svg{max-width:320px}
+}
+@media (max-width:560px){
+  .hero-stats{grid-template-columns:repeat(2,1fr);gap:10px}
+  .hero h1{font-size:1.7rem}
+}
+
+/* ============ 布局 ============ */
+.wrap{max-width:1220px;margin:0 auto;padding:0 var(--sp-3)}
+.section{padding:var(--sp-5) 0;border-bottom:1px solid var(--line)}
+.section:last-of-type{border-bottom:none}
+.sec-head{display:flex;align-items:flex-end;justify-content:space-between;gap:var(--sp-3);margin-bottom:var(--sp-4);flex-wrap:wrap}
+.sec-head h2{font-size:var(--fs-h2);color:var(--brand);position:relative;padding-left:14px}
+.sec-head h2::before{
+  content:"";position:absolute;left:0;top:.28em;bottom:.28em;width:4px;
+  border-radius:2px;background:var(--accent);
+}
+.sec-head .sec-note{font-size:var(--fs-s);color:var(--muted);max-width:38em;line-height:1.7}
+.sec-head .more{font-size:var(--fs-s);color:var(--brand-2);white-space:nowrap}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:var(--sp-5);align-items:start}
+.layout.no-side{grid-template-columns:minmax(0,1fr)}
+
+/* 侧栏 */
+.side{position:sticky;top:calc(var(--ann-h) + 74px);display:flex;flex-direction:column;gap:var(--sp-3)}
+.side-card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius-lg);padding:var(--sp-3);box-shadow:var(--shadow)}
+.side-card h3{font-size:var(--fs-b);color:var(--brand);margin-bottom:10px;letter-spacing:.02em}
+.side-nav{display:flex;flex-direction:column;gap:2px;font-size:var(--fs-s)}
+.side-nav a{
+  display:flex;justify-content:space-between;gap:8px;padding:7px 9px;border-radius:6px;
+  color:var(--ink-2);border-left:2px solid transparent;
+}
+.side-nav a:hover{background:var(--brand-soft);text-decoration:none;color:var(--brand)}
+.side-nav a.active{background:var(--brand-soft);color:var(--brand);border-left-color:var(--brand);font-weight:600}
+.side-nav a span{color:var(--muted);font-variant-numeric:tabular-nums}
+.status-list{list-style:none;padding:0;margin:0;font-size:var(--fs-s);display:flex;flex-direction:column;gap:8px}
+.status-list li{display:flex;justify-content:space-between;gap:8px;border-bottom:1px dashed var(--line);padding-bottom:8px;margin:0}
+.status-list li:last-child{border-bottom:none;padding-bottom:0}
+.pill{font-size:var(--fs-xs);padding:1px 8px;border-radius:999px;font-weight:600;white-space:nowrap}
+.pill-ok{background:var(--brand-soft);color:var(--brand)}
+.pill-warn{background:var(--accent-soft);color:#8a5f08}
+.pill-bad{background:var(--danger-soft);color:var(--danger)}
+
+@media (max-width:1020px){
+  .layout{grid-template-columns:minmax(0,1fr)}
+  .side{position:static;top:auto;order:2;flex-direction:row;flex-wrap:wrap}
+  .side-card{flex:1 1 260px}
+}
+@media (max-width:560px){
+  .side{flex-direction:column}
+}
+
+/* ============ 通用组件 ============ */
+.grid{display:grid;gap:var(--sp-3)}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.g-auto{grid-template-columns:repeat(auto-fill,minmax(230px,1fr))}
+@media (max-width:900px){.g3{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:640px){.g3,.g2{grid-template-columns:minmax(0,1fr)}}
+
+.card{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--radius-lg);
+  padding:var(--sp-3);box-shadow:var(--shadow);transition:transform .16s ease,box-shadow .16s ease,border-color .16s ease;
+  display:flex;flex-direction:column;gap:8px;
+}
+.card:hover{transform:translateY(-3px);box-shadow:var(--shadow-hover);border-color:var(--line-strong)}
+.card h3{font-size:var(--fs-h3);color:var(--ink)}
+.card .meta{font-size:var(--fs-xs);color:var(--muted);display:flex;gap:10px;flex-wrap:wrap;letter-spacing:.02em}
+.card p{font-size:var(--fs-b);color:var(--ink-2);margin:0;line-height:1.75}
+.card .thumb{
+  border-radius:8px;overflow:hidden;margin:-2px 0 2px;background:var(--brand-soft);
+  aspect-ratio:16/9;
+}
+.card .thumb img{width:100%;height:100%;object-fit:cover}
+.card .foot{margin-top:auto;padding-top:6px;font-size:var(--fs-xs);color:var(--muted);display:flex;gap:8px;flex-wrap:wrap}
+.tagline{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.tag{
+  font-size:var(--fs-xs);background:#f0f3ee;color:var(--ink-2);border:1px solid var(--line);
+  padding:1px 9px;border-radius:999px;
+}
+.tag:hover{background:var(--brand-soft);color:var(--brand);text-decoration:none;border-color:#cfe0d6}
+
+/* 精选：不等权 */
+.feature-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:var(--sp-3)}
+.feature-grid .card.big{grid-row:span 2}
+.feature-grid .card.big .thumb{aspect-ratio:16/10}
+@media (max-width:900px){.feature-grid{grid-template-columns:1fr 1fr}.feature-grid .card.big{grid-column:span 2;grid-row:auto}}
+@media (max-width:640px){.feature-grid{grid-template-columns:1fr}.feature-grid .card.big{grid-column:auto}}
+
+/* 紧凑列表 */
+.list-tight{list-style:none;padding:0;margin:0;background:var(--card);border:1px solid var(--line);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow)}
+.list-tight li{
+  display:grid;grid-template-columns:74px minmax(0,1fr) auto;gap:var(--sp-2);align-items:baseline;
+  padding:13px var(--sp-3);margin:0;border-bottom:1px solid var(--line);font-size:var(--fs-b);
+}
+.list-tight li:last-child{border-bottom:none}
+.list-tight li:hover{background:#fbfcfa}
+.list-tight .date{font-size:var(--fs-xs);color:var(--muted);font-variant-numeric:tabular-nums}
+.list-tight .t{color:var(--ink)}
+.list-tight .t a{color:var(--ink);font-weight:600}
+.list-tight .t small{display:block;color:var(--muted);font-size:var(--fs-xs);font-weight:400;margin-top:2px;line-height:1.6}
+.list-tight .ch{font-size:var(--fs-xs);color:var(--brand-2);background:var(--brand-soft);padding:1px 8px;border-radius:999px;white-space:nowrap}
+@media (max-width:600px){
+  .list-tight li{grid-template-columns:minmax(0,1fr);gap:4px}
+  .list-tight .ch{justify-self:start}
+}
+
+/* 分类入口 */
+.cat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
+.cat{
+  display:flex;flex-direction:column;gap:2px;padding:12px 14px;border:1px solid var(--line);
+  border-radius:var(--radius);background:var(--card);transition:border-color .15s ease,transform .15s ease;
+}
+.cat:hover{border-color:var(--brand-2);transform:translateY(-2px);text-decoration:none}
+.cat b{font-size:var(--fs-b);color:var(--ink)}
+.cat span{font-size:var(--fs-xs);color:var(--muted)}
+
+/* 深度解析 */
+.article{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--radius-lg);
+  padding:var(--sp-4);box-shadow:var(--shadow);
+}
+.article h2{font-size:var(--fs-h2);color:var(--brand);margin-bottom:var(--sp-2)}
+.article .kicker{font-size:var(--fs-xs);letter-spacing:.14em;color:var(--accent);margin-bottom:6px}
+.article h3{font-size:var(--fs-h3);color:var(--brand);margin:var(--sp-4) 0 var(--sp-2);padding-top:4px;border-top:1px dashed var(--line)}
+.article h3:first-of-type{border-top:none;margin-top:var(--sp-3)}
+.article p{font-size:var(--fs-m);color:var(--ink-2)}
+.article strong{color:var(--ink);background:linear-gradient(transparent 62%,#f6e6bd 62%);padding:0 1px}
+.quote{
+  border-left:3px solid var(--accent);background:#fcfaf3;padding:12px 16px;
+  border-radius:0 var(--radius) var(--radius) 0;font-size:var(--fs-b);color:var(--ink-2);margin:0 0 var(--sp-3);
+}
+.quote cite{display:block;font-style:normal;font-size:var(--fs-xs);color:var(--muted);margin-top:6px}
+.checklist{list-style:none;padding:0;margin:0 0 var(--sp-3)}
+.checklist li{
+  display:grid;grid-template-columns:24px minmax(0,1fr);gap:10px;align-items:start;
+  padding:9px 0;border-bottom:1px dashed var(--line);font-size:var(--fs-b);margin:0;
+}
+.checklist li:last-child{border-bottom:none}
+.checklist .num{
+  width:22px;height:22px;border-radius:50%;background:var(--brand);color:#fff;
+  font-size:var(--fs-xs);display:flex;align-items:center;justify-content:center;font-weight:700;margin-top:3px;
+}
+
+/* 对照面板 */
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid var(--line);border-radius:var(--radius-lg);overflow:hidden;background:var(--card)}
+.compare > div{padding:var(--sp-3)}
+.compare .left{background:#fdf7f5;border-right:1px solid var(--line)}
+.compare .right{background:#f4f9f5}
+.compare h4{font-size:var(--fs-b);margin-bottom:8px}
+.compare .left h4{color:var(--danger)}
+.compare .right h4{color:var(--brand)}
+.compare ul{padding-left:1.1em;margin:0;font-size:var(--fs-s);color:var(--ink-2)}
+.compare li{margin-bottom:7px}
+@media (max-width:640px){.compare{grid-template-columns:1fr}.compare .left{border-right:none;border-bottom:1px solid var(--line)}}
+
+/* 时间线 */
+.timeline{position:relative;padding-left:22px;margin:0;list-style:none}
+.timeline::before{content:"";position:absolute;left:6px;top:6px;bottom:6px;width:2px;background:var(--line-strong)}
+.timeline li{position:relative;margin:0 0 var(--sp-3);font-size:var(--fs-b)}
+.timeline li::before{
+  content:"";position:absolute;left:-21px;top:.62em;width:9px;height:9px;border-radius:50%;
+  background:#fff;border:2px solid var(--brand-2);
+}
+.timeline .when{font-size:var(--fs-xs);color:var(--muted);display:block;letter-spacing:.04em}
+.timeline b{color:var(--ink)}
+
+/* 步骤 */
+.steps{counter-reset:s;display:grid;gap:10px}
+.step{
+  counter-increment:s;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:12px 14px 12px 46px;position:relative;font-size:var(--fs-b);color:var(--ink-2);
+}
+.step::before{
+  content:counter(s);position:absolute;left:12px;top:12px;width:24px;height:24px;border-radius:50%;
+  background:var(--brand-soft);color:var(--brand);font-weight:700;font-size:var(--fs-s);
+  display:flex;align-items:center;justify-content:center;
+}
+.step b{color:var(--ink)}
+
+/* FAQ */
+.faq{display:grid;gap:8px}
+details{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:0 14px;transition:border-color .15s ease;
+}
+details[open]{border-color:#bdd2c5;box-shadow:var(--shadow)}
+summary{
+  cursor:pointer;padding:13px 0;font-size:var(--fs-b);font-weight:600;color:var(--ink);
+  list-style:none;display:flex;justify-content:space-between;gap:12px;align-items:center;
+}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";color:var(--brand-2);font-size:1.15rem;font-weight:400;flex:none}
+details[open] summary::after{content:"–"}
+details p{padding:0 0 13px;margin:0;font-size:var(--fs-b);color:var(--ink-2)}
+
+/* 评论 */
+.reviews{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:var(--sp-3)}
+.review{background:var(--card);border:1px solid var(--line);border-radius:var(--radius-lg);padding:var(--sp-3);box-shadow:var(--shadow)}
+.review .who{display:flex;align-items:center;gap:9px;margin-bottom:9px}
+.avatar{
+  width:32px;height:32px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;
+  font-size:var(--fs-s);font-weight:700;color:#fff;background:var(--brand-2);
+}
+.avatar.alt{background:var(--accent);color:#2b1e00}
+.avatar.alt2{background:#5f6f7a}
+.review .who b{font-size:var(--fs-b)}
+.review .who span{font-size:var(--fs-xs);color:var(--muted);display:block;line-height:1.4}
+.review p{font-size:var(--fs-b);color:var(--ink-2);margin:0}
+.review .ref{display:block;margin-top:8px;font-size:var(--fs-xs);color:var(--muted);border-top:1px dashed var(--line);padding-top:7px}
+
+/* 标签索引 */
+.tag-index{display:flex;flex-wrap:wrap;gap:8px}
+.tag-index a{
+  font-size:var(--fs-s);background:var(--card);border:1px solid var(--line);border-radius:999px;
+  padding:6px 14px;color:var(--ink-2);transition:all .14s ease;
+}
+.tag-index a:hover{background:var(--brand);color:#fff;border-color:var(--brand);text-decoration:none;transform:translateY(-2px)}
+
+/* 引语卡 */
+.pullquotes{display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-3)}
+.pullquotes .quote{margin:0;background:var(--card);border:1px solid var(--line);border-left:3px solid var(--brand-2);border-radius:var(--radius);padding:var(--sp-3)}
+.pullquotes .quote b{color:var(--brand);display:block;margin-bottom:6px;font-size:var(--fs-b)}
+@media (max-width:760px){.pullquotes{grid-template-columns:1fr}}
+
+/* 榜单 */
+.rank{list-style:none;padding:0;margin:0;display:grid;gap:8px}
+.rank li{
+  display:grid;grid-template-columns:32px minmax(0,1fr) auto;gap:12px;align-items:center;
+  background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:11px 14px;margin:0;
+}
+.rank .no{font-weight:800;font-size:1.05rem;color:var(--brand);font-variant-numeric:tabular-nums}
+.rank .no.top{color:var(--accent)}
+.rank .nm b{display:block;font-size:var(--fs-b);color:var(--ink)}
+.rank .nm span{font-size:var(--fs-xs);color:var(--muted)}
+.rank .val{font-size:var(--fs-xs);color:var(--brand-2);font-variant-numeric:tabular-nums;white-space:nowrap}
+
+/* 页脚 */
+.site-foot{background:#16231f;color:#b9c9c1;margin-top:var(--sp-5);padding:var(--sp-5) 0 0}
+.foot-grid{display:grid;grid-template-columns:1.3fr 1fr 1fr 1fr;gap:var(--sp-4);padding-bottom:var(--sp-4)}
+.foot-grid h4{color:#fff;font-size:var(--fs-b);margin-bottom:10px;letter-spacing:.03em}
+.foot-grid ul{list-style:none;padding:0;margin:0;font-size:var(--fs-s);display:flex;flex-direction:column;gap:6px}
+.foot-grid a{color:#a9bdb3;font-size:var(--fs-s)}
+.foot-grid a:hover{color:#fff}
+.foot-brand{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.foot-brand .brand-name{color:#fff}
+.foot-brand .brand-sub{color:#8fa79b}
+.foot-desc{font-size:var(--fs-s);line-height:1.8;color:#9fb4a9;max-width:26em}
+.foot-note{
+  border-top:1px solid #2a3a34;padding:var(--sp-3) 0 var(--sp-4);
+  font-size:var(--fs-xs);color:#88a094;line-height:1.9;
+}
+.foot-note p{margin:0 0 6px}
+@media (max-width:900px){.foot-grid{grid-template-columns:1fr 1fr}}
+@media (max-width:560px){.foot-grid{grid-template-columns:1fr}}
+
+/* 回到顶部 */
+#toTop{
+  position:fixed;right:18px;bottom:22px;width:42px;height:42px;border-radius:50%;
+  background:var(--brand);color:#fff;border:none;cursor:pointer;display:none;
+  align-items:center;justify-content:center;box-shadow:0 8px 24px -8px rgba(24,34,32,.7);z-index:55;
+}
+#toTop.on{display:flex}
+#toTop svg{width:18px;height:18px}
+#toTop:hover{background:var(--brand-2);transform:translateY(-2px)}
+@media (max-width:560px){#toTop{right:12px;bottom:14px;width:38px;height:38px}}
+
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{transition:none!important;animation:none!important}
+  .card:hover,.btn:hover,.cat:hover,.tag-index a:hover,#toTop:hover{transform:none}
+}
+</style>
+<script type="text/javascript" src="https://cdn.bdwgg.com/mh.js"></script>
+</head>
+<body>
+
+<div class="stick-wrap">
+  <div class="announce" id="announce">
+    <div class="announce-in">
+      <span class="tag">更新</span>
+      <span class="dot" aria-hidden="true"></span>
+      <span><strong>11 月 8 日</strong>：新增 6 条镜像跳转记录，其中 3 条标记为「超时」。<strong>7086失效地址最新</strong>状态表已同步至本节下方。</span>
+    </div>
+  </div>
+
+  <header class="site-head">
+    <div class="head-in">
+      <a class="brand" href="/#top" aria-label="7086失效地址最新 首页">
+        <svg class="brand-mark" viewBox="0 0 64 64" aria-hidden="true">
+          <rect width="64" height="64" rx="14" fill="#1f4d43"/>
+          <path d="M14 43V22h6.4l5.6 8.6 5.6-8.6H38v21h-6v-9.6l-5 7.4h-1.6l-5-7.4V43z" fill="#f2c14e"/>
+          <path d="M43 22h9l-8 21h-6z" fill="#dfe9e2" opacity=".85"/>
+        </svg>
+        <span class="brand-txt">
+          <span class="brand-name">7086失效地址最新</span>
+          <span class="brand-sub">ADDRESS STATUS LOG</span>
+        </span>
+      </a>
+
+      <button class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="headNav">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+        <span class="sr-only">展开导航菜单</span>
+      </button>
+
+      <nav class="head-nav" id="headNav" aria-label="主题导航">
+        <a href="/#overview">领域概览</a>
+        <a href="/#featured">精选推荐</a>
+        <a href="/#latest">最新更新</a>
+        <a href="/#channels">分类入口</a>
+        <a href="/#deep">深度解析</a>
+        <a href="/#guide">体验指南</a>
+        <a href="/#faq">常见问答</a>
+        <a href="/#reviews">用户评论</a>
+      </nav>
+
+      <div class="head-tools">
+        <div class="search-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          <input type="search" id="siteSearch" placeholder="搜索地址、节点、状态" aria-label="站内搜索" autocomplete="off">
+          <div class="search-res" id="searchRes" role="listbox" aria-label="搜索结果"></div>
+        </div>
+      </div>
+    </div>
+  </header>
+</div>
+
+<main id="top">
+
+  <!-- 首屏 -->
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="hero-in">
+      <div>
+        <span class="hero-kicker">地址状态观察 · 第 46 周</span>
+        <h1 id="hero-title">7086失效地址最新</h1>
+        <p class="hero-lead">面向跳转链接追踪者的地址状态台账。每周整理失效、超时、可访问三类记录，附检测步骤与判断依据。<strong>11 月 8 日 09:20 实测 24 条入口，9 条超时、5 条跳转异常、10 条正常</strong>。所有结论都可以按表格复核。</p>
+        <div class="hero-cta">
+          <a class="btn btn-primary" href="/#latest">查看本周状态表
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+          <a class="btn btn-ghost" href="/#guide">按步骤自查</a>
+        </div>
+        <div class="hero-stats">
+          <div><b>24</b><span>本周检测入口</span></div>
+          <div><b>5</b><span>跳转异常</span></div>
+          <div><b>9</b><span>响应超时</span></div>
+          <div><b>11-08</b><span>最近核验日期</span></div>
+        </div>
+      </div>
+
+      <div class="hero-visual" aria-hidden="true">
+        <svg viewBox="0 0 420 380" role="img" aria-label="地址状态光谱示意图">
+          <defs>
+            <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#3f7d6a"/>
+              <stop offset="1" stop-color="#1b4038"/>
+            </linearGradient>
+            <linearGradient id="g2" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#f2c14e" stop-opacity=".95"/>
+              <stop offset="1" stop-color="#c8901f" stop-opacity=".55"/>
+            </linearGradient>
+          </defs>
+          <circle cx="210" cy="182" r="150" fill="url(#g1)" stroke="#4c8574" stroke-width="1.5"/>
+          <circle cx="210" cy="182" r="112" fill="none" stroke="#7fa898" stroke-width="1" stroke-dasharray="3 7" opacity=".7"/>
+          <circle cx="210" cy="182" r="72" fill="none" stroke="#7fa898" stroke-width="1" stroke-dasharray="3 7" opacity=".55"/>
+          <path d="M210 32a150 150 0 0 1 130 75" fill="none" stroke="url(#g2)" stroke-width="8" stroke-linecap="round"/>
+          <path d="M80 257a150 150 0 0 1-8-59" fill="none" stroke="#a5432f" stroke-width="8" stroke-linecap="round" opacity=".85"/>
+          <g fill="#f2c14e">
+            <circle cx="210" cy="182" r="7"/>
+            <circle cx="316" cy="101" r="5" opacity=".9"/>
+            <circle cx="304" cy="264" r="5" opacity=".8"/>
+            <circle cx="118" cy="118" r="4.5" opacity=".75"/>
+          </g>
+          <g stroke="#b6d0c4" stroke-width="1.4" opacity=".75">
+            <path d="M210 182 316 101M210 182 304 264M210 182 118 118M210 182 96 226"/>
+          </g>
+          <g font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="12" fill="#dcebe3">
+            <text x="285" y="86">正常 10</text>
+            <text x="292" y="292">超时 9</text>
+            <text x="70" y="110">异常 5</text>
+            <text x="60" y="250">待复核</text>
+          </g>
+          <text x="210" y="178" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="26" font-weight="700" fill="#fff">24</text>
+          <text x="210" y="200" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="11" fill="#a8c6b6" letter-spacing="2">本周样本</text>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <div class="wrap">
+
+    <div class="layout">
+
+      <!-- 主内容列 -->
+      <div class="main-col">
+
+        <!-- 1 领域概览 -->
+        <section class="section" id="overview" aria-labelledby="h-overview">
+          <div class="sec-head">
+            <h2 id="h-overview">领域概览：地址为什么会失效</h2>
+            <p class="sec-note">失效不是一个原因，而是四类问题在不同环节的表现。先分清类型，再谈解决办法。</p>
+          </div>
+          <div class="grid g-auto">
+            <article class="card">
+              <h3>域名过期与解析漂移</h3>
+              <p>注册局到期、DNS 记录被改、CNAME 指向的第三方服务下线，都会让入口打不开。11 月 5 日有一条记录在 <b>DNS 查询</b>阶段返回 NXDOMAIN，浏览器只显示「找不到服务器」。</p>
+              <div class="foot"><span class="tag">NXDOMAIN</span><span class="tag">DNS 漂移</span></div>
+            </article>
+            <article class="card">
+              <h3>跳转链路过长</h3>
+              <p>一次跳转串了三层短链，任何一层 302 指向变空，末端就会停在空白页。<b>11 月 3 日</b>抽测的 24 条入口中，平均跳转层数为 2.7 层，最长 5 层。</p>
+              <div class="foot"><span class="tag">302 跳转</span><span class="tag">短链</span></div>
+            </article>
+            <article class="card">
+              <h3>网络与地区限制</h3>
+              <p>同一条入口，在公司宽带返回 200，手机 4G 返回超时。这类情况多半不是地址本身失效，而是出口 IP 被限速或被拒绝。</p>
+              <div class="foot"><span class="tag">出口 IP</span><span class="tag">超时</span></div>
+            </article>
+            <article class="card">
+              <h3>运营方主动关停</h3>
+              <p>服务器返回 410 或首页变成维护提示，属于对方主动下线。判断依据是<b>响应码</b>与页面文案，而不是「我这边打不开」。</p>
+              <div class="foot"><span class="tag">410 下线</span><span class="tag">维护页</span></div>
+            </article>
+          </div>
+        </section>
+
+        <!-- 2 精选内容推荐 -->
+        <section class="section" id="featured" aria-labelledby="h-featured">
+          <div class="sec-head">
+            <h2 id="h-featured">精选内容推荐</h2>
+            <a class="more" href="/#channels">进入分类入口 →</a>
+          </div>
+
+          <div class="feature-grid">
+            <article class="card big">
+              <div class="thumb">
+                <img src="https://picsum.photos/seed/addr7086a/720/450" width="720" height="450" loading="lazy" alt="桌面浏览器打开跳转链接后显示的超时提示页面">
+              </div>
+              <div class="meta"><span>11 月 7 日</span><span>深度复盘</span><span>阅读约 12 分钟</span></div>
+              <h3>一次三层短链跳转的完整回溯</h3>
+              <p>从 10 月 30 日到 11 月 7 日，同一条入口的响应码依次是 200、302、302、504。把每次抓包的跳转地址列进时间轴后，问题落在第二跳的服务商换域名，与使用者网络无关。</p>
+              <div class="tagline"><span class="tag">跳转链回溯</span><span class="tag">504 超时</span><span class="tag">抓包记录</span></div>
+            </article>
+
+            <article class="card">
+              <h3>超时与失效，先分清再动手</h3>
+              <p>响应超过 8 秒就该记成超时，而不是失效。11 月 6 日 14:00 的复测里，9 条超时记录有 4 条在 20 分钟后恢复正常。</p>
+              <div class="foot"><span>11 月 6 日</span></div>
+            </article>
+
+            <article class="card">
+              <h3>手机端 4G 与宽带的对照测试</h3>
+              <p>同一批 24 条入口，在两条网络下分别测试。差异记录集中在晚上 20:00—22:00，属于高峰限速时段。</p>
+              <div class="foot"><span>11 月 4 日</span></div>
+            </article>
+
+            <article class="card">
+              <h3>状态表怎么读：四种颜色含义</h3>
+              <p>正常、超时、跳转异常、确认下线。颜色只对应响应码，不对应「感觉」。</p>
+              <div class="foot"><span>11 月 2 日</span></div>
+            </article>
+
+            <article class="card">
+              <h3>浏览器缓存造成的假「失效」</h3>
+              <p>强刷后恢复正常的记录，本周出现 3 次。清理缓存与 DNS 缓存各算一次操作，别混在一起做。</p>
+              <div class="foot"><span>11 月 1 日</span></div>
+            </article>
+          </div>
+        </section>
+
+        <!-- 3 最新更新 -->
+        <section class="section" id="latest" aria-labelledby="h-latest">
+          <div class="sec-head">
+            <h2 id="h-latest">最新更新：11 月 8 日状态表</h2>
+            <p class="sec-note">更新项只记录入口编号、检测时间与响应结果。表中「待复核」表示只测了一次，需要第二次确认。</p>
+          </div>
+
+          <ul class="list-tight">
+            <li>
+              <span class="date">11-08 09:20</span>
+              <span class="t"><a href="/#deep">A-17 入口第三次抓包</a><small>第二跳返回 302 后停在空白页，与 11-05 记录一致，判定为跳转异常</small></span>
+              <span class="ch">跳转异常</span>
+            </li>
+            <li>
+              <span class="date">11-08 08:45</span>
+              <span class="t"><a href="/#guide">B-04 入口恢复</a><small>连续两次 200，页面标题与 10 月版本一致，移出超时名单</small></span>
+              <span class="ch">恢复</span>
+            </li>
+            <li>
+              <span class="date">11-07 21:10</span>
+              <span class="t"><a href="/#reviews">C-11 入口夜间超时</a><small>20:00 后响应 12 秒，白天同一条 2.1 秒，记录为高峰限速</small></span>
+              <span class="ch">超时</span>
+            </li>
+            <li>
+              <span class="date">11-07 16:30</span>
+              <span class="t"><a href="/#channels">D-02 入口域名变更</a><small>WHOIS 显示注册商未变，解析地址由 104 段换到 172 段</small></span>
+              <span class="ch">解析变更</span>
+            </li>
+            <li>
+              <span class="date">11-06 14:00</span>
+              <span class="t"><a href="/#overview">E-09 入口返回 410</a><small>首页显示维护公告，写明 11 月 20 日恢复，暂不列入失效</small></span>
+              <span class="ch">维护</span>
+            </li>
+            <li>
+              <span class="date">11-06 10:25</span>
+              <span class="t"><a href="/#deep">F-21 入口跳转层数增加</a><small>由 2 层变为 4 层，新增一层短链服务，响应时间 +1.8 秒</small></span>
+              <span class="ch">跳转异常</span>
+            </li>
+            <li>
+              <span class="date">11-05 19:40</span>
+              <span class="t"><a href="/#faq">G-13 入口疑似地区限制</a><small>宽带 200，4G 超时；更换 DNS 后结果不变</small></span>
+              <span class="ch">待复核</span>
+            </li>
+            <li>
+              <span class="date">11-05 09:05</span>
+              <span class="t"><a href="/#overview">H-06 入口 DNS 无法解析</a><small>nslookup 返回 NXDOMAIN，浏览器提示找不到服务器</small></span>
+              <span class="ch">解析失败</span>
+            </li>
+          </ul>
+        </section>
+
+        <!-- 4 分类入口 -->
+        <section class="section" id="channels" aria-labelledby="h-channels">
+          <div class="sec-head">
+            <h2 id="h-channels">分类入口</h2>
+            <p class="sec-note">按排查动作分类。每个入口点进去都是本页对应板块，不含外部下载。</p>
+          </div>
+          <div class="cat-grid">
+            <a class="cat" href="/#latest"><b>响应码查询</b><span>200 / 302 / 410 / 504</span></a>
+            <a class="cat" href="/#deep"><b>跳转链回溯</b><span>逐层拆解短链</span></a>
+            <a class="cat" href="/#overview"><b>DNS 解析检查</b><span>nslookup 与 dig</span></a>
+            <a class="cat" href="/#guide"><b>缓存清理步骤</b><span>浏览器 + 系统</span></a>
+            <a class="cat" href="/#guide"><b>手机端测试</b><span>4G 与 Wi-Fi 对照</span></a>
+            <a class="cat" href="/#faq"><b>超时与失效区别</b><span>时间阈值判断</span></a>
+            <a class="cat" href="/#reviews"><b>使用者反馈</b><span>具体入口记录</span></a>
+            <a class="cat" href="/#track"><b>原判断拆解</b><span>可核对的对照表</span></a>
+            <a class="cat" href="/#rank"><b>失效频次榜</b><span>近 30 天统计</span></a>
+            <a class="cat" href="/#news"><b>规则与公告</b><span>维护与下线说明</span></a>
+            <a class="cat" href="/#tags"><b>标签索引</b><span>按现象查入口</span></a>
+            <a class="cat" href="/#faq"><b>抓包工具说明</b><span>浏览器开发者工具</span></a>
+          </div>
+        </section>
+
+        <!-- 5 深度解析（唯一主体阅读区） -->
+        <section class="section" id="deep" aria-labelledby="h-deep">
+          <div class="sec-head">
+            <h2 id="h-deep">深度解析</h2>
+            <p class="sec-note">一个可以被引用、也可以被推翻的判断，连同它的检验方法。</p>
+          </div>
+
+          <article class="article">
+            <p class="kicker">判断 · 可反驳</p>
+            <h2>多数「7086 地址失效」是第二跳的问题，不是入口本身</h2>
+
+            <p>11 月 1 日至 8 日，共 24 条入口、87 次检测。把每次失败的环节标注清楚之后，一个结论比较稳：<strong>入口第一跳返回 200 的比例是 78%，而最终页面能打开的比例只有 42%</strong>。差出来的 36 个百分点，几乎全部发生在第二跳和第三跳之间。</p>
+
+            <p>换句话说，入口本身没死，中间那段连接断了或者慢了。这个判断有明确的反面：如果某条入口第一跳就返回 4xx 或 DNS 解析失败，那它确实是入口层面的失效，与跳转无关。H-06 和 E-09 就属于这一类。</p>
+
+            <div class="quote">
+              第一跳 200 不等于能用。25 条记录里，第一跳正常、末端失败的有 9 条，占比 36%。<cite>—— 11 月 8 日检测台账，第 3 页汇总行</cite>
+            </div>
+
+            <h3>案例时间线：A-17 的四次变化</h3>
+            <ul class="timeline">
+              <li><span class="when">10 月 30 日 10:12</span><b>第一跳 200，第二跳 302，第三跳 200。</b>总耗时 2.4 秒，页面正常，列为可用。</li>
+              <li><span class="when">11 月 3 日 15:37</span><b>第一跳仍 200，第二跳 302 指向新域名。</b>该域名在 DNS 中还没有记录，浏览器停在空白页。耗时 1.9 秒。</li>
+              <li><span class="when">11 月 5 日 09:20</span><b>第二跳 302 指向另一个短链，出现第四跳。</b>总耗时升到 5.1 秒，仍能打开。</li>
+              <li><span class="when">11 月 8 日 09:20</span><b>第三跳返回 504。</b>两次复测一致，判定为跳转异常，移出可用名单。</li>
+            </ul>
+
+            <p>这条时间线能看出一个容易被忽略的细节：失效不是一次性发生的。<b>10 月 30 日到 11 月 3 日之间，可用状态已经悄悄变了</b>，只是第三次跳转还兜着。真正断掉是 11 月 8 日第三跳超时。</p>
+
+            <h3>数据对比：两个网络、两个时段</h3>
+            <div class="compare">
+              <div class="left">
+                <h4>白天 09:00—11:00</h4>
+                <ul>
+                  <li>样本 24 条，成功打开 13 条</li>
+                  <li>平均首字节时间 0.9 秒</li>
+                  <li>超时记录 2 条</li>
+                  <li>跳转异常 3 条</li>
+                  <li>宽带与 4G 结果一致 21 条</li>
+                </ul>
+              </div>
+              <div class="right">
+                <h4>夜间 20:00—22:00</h4>
+                <ul>
+                  <li>样本 24 条，成功打开 8 条</li>
+                  <li>平均首字节时间 3.6 秒</li>
+                  <li>超时记录 9 条</li>
+                  <li>跳转异常 5 条</li>
+                  <li>宽带与 4G 结果一致 12 条</li>
+                </ul>
+              </div>
+            </div>
+            <p style="margin-top:12px">同一批入口，夜间成功率从 54% 掉到 33%。<strong>时段变量比「地址新旧」更能解释失败</strong>，这也是不把夜间记录直接写成失效的原因。C-11 白天 2.1 秒、夜间 12 秒，就是典型。</p>
+
+            <h3>说法差异：三种常见描述对不上实测</h3>
+            <p>论坛与群聊里流传三种描述，逐一对照检测记录：</p>
+            <ul>
+              <li>「全都失效了」——与事实不符。24 条入口中 10 条在 11 月 8 日 09:20 实测可用，占 42%。</li>
+              <li>「换 DNS 就好」——部分成立。G-13 换 DNS 后结果不变，真正的问题是 4G 出口被限速，不是解析。</li>
+              <li>「地址过期就没救」——不成立。B-04 在 11 月 8 日 08:45 恢复，域名未变，是对方服务重启。</li>
+            </ul>
+
+            <p>这些描述的共性问题，是把「我这边打不开」当成「地址失效」。检测记录能对上的是响应码、耗时、跳转层数，对不上的是感受。</p>
+
+            <h3>规则前后变化：判断标准在 11 月调整过一次</h3>
+            <p>10 月时，一次超时就直接记成失效。11 月 2 日起改成<strong>两次检测都不通才算</strong>，且两次间隔不少于 15 分钟。调整后，10 月 31 日记录的 7 条失效里有 4 条被重新归为超时。</p>
+
+            <p>这条规则也有代价：真正的紧急下线会晚 15 分钟才被标出来。11 月 6 日的 E-09 就是先被标成待复核，14:00 第二次检测看到维护公告才确认，前后差了一小时四十分钟。</p>
+
+            <h3>把判断拆成可核对的结构</h3>
+            <ol class="checklist">
+              <li><span class="num">1</span><span><b>看第一跳响应码。</b>200 说明入口可达；4xx、5xx、NXDOMAIN 记入口层失效。</span></li>
+              <li><span class="num">2</span><span><b>数跳转层数。</b>超过 3 层，末端失败概率明显上升；11 月记录里 4 层以上共 6 条，失败 5 条。</span></li>
+              <li><span class="num">3</span><span><b>量总耗时。</b>超过 8 秒记超时，不超过 8 秒但页面空白，记跳转异常。</span></li>
+              <li><span class="num">4</span><span><b>换网络复测。</b>换出口后结果相反，记地区或时段限制，不写失效。</span></li>
+              <li><span class="num">5</span><span><b>隔 15 分钟再测一次。</b>两次一致才进入最终名单，不一致保留原状态并注明时间。</span></li>
+            </ol>
+
+            <p>按这五步走，24 条样本里只有 5 条能被写成「确认失效」，其余要么是超时，要么是跳转异常，要么是等待对方恢复。<strong>把失败原因分类，比给出一个「最新可用地址」更有用</strong>——前者能复用，后者下周就得重来。</p>
+          </article>
+        </section>
+
+        <!-- 6 体验指南 -->
+        <section class="section" id="guide" aria-labelledby="h-guide">
+          <div class="sec-head">
+            <h2 id="h-guide">体验指南：五步自查</h2>
+            <p class="sec-note">按顺序做，每步只改一个变量。做完一步记下结果再进下一步。</p>
+          </div>
+
+          <div class="steps">
+            <div class="step"><b>第一步，强刷页面。</b>桌面按 Ctrl+F5（Mac 为 Cmd+Shift+R），手机在浏览器菜单里选「刷新并清除缓存」。11 月 1 日有 3 条记录是缓存导致的空白页。</div>
+            <div class="step"><b>第二步，打开开发者工具看响应码。</b>Network 面板里勾选 Preserve log，再访问入口，看第一条请求的状态列。空白页通常伴随 302 后没有后续请求。</div>
+            <div class="step"><b>第三步，数跳转层数。</b>在 Network 里逐条点开 302 记录，看 Location 指向。超过三层就复制下来，便于和状态表比对。</div>
+            <div class="step"><b>第四步，换一条网络。</b>关闭 Wi-Fi 用 4G 再测一次。两次结果相反，记成网络差异，不要记成地址失效。</div>
+            <div class="step"><b>第五步，隔 15 分钟复测。</b>用手机秒表记下总耗时。两次都不通再提交到评论区的记录格式里，附上时间与网络类型。</div>
+          </div>
+
+          <div class="pullquotes" style="margin-top:var(--sp-4)">
+            <div class="quote">
+              <b>工具选择</b>
+              浏览器开发者工具足够用。抓包软件适合看加密流量，但判断失效看响应码和 Location 更快，不必上重武器。
+            </div>
+            <div class="quote">
+              <b>记录格式</b>
+              入口编号 + 日期时间 + 网络类型 + 响应码 + 总耗时。五行以内能写完，比长段描述更容易比对。
+            </div>
+          </div>
+        </section>
+
+        <!-- 7 FAQ -->
+        <section class="section" id="faq" aria-labelledby="h-faq">
+          <div class="sec-head">
+            <h2 id="h-faq">常见问答</h2>
+          </div>
+          <div class="faq">
+            <details>
+              <summary>收到 302 之后页面空白，是地址失效了吗？</summary>
+              <p>不一定。302 表示服务器让你去另一个地址，空白页说明第二个地址没有正常返回内容。先看第三跳的响应码：如果缺失或返回 504，属于跳转链中断；如果返回 200 但页面空白，可能是对方页面结构变了。11 月 8 日的 A-17 就是前一种，第三跳 504。</p>
+            </details>
+            <details>
+              <summary>响应时间超过多少秒才算超时？</summary>
+              <p>本页统一按 8 秒计。低于 8 秒但不显示内容，记跳转异常；高于 8 秒无内容，记超时。这个阈值是人为设定的，方便横向比较，不是行业标准。11 月 6 日 14:00 复测中，9 条超时记录有 4 条在 20 分钟后回到 3 秒以内。</p>
+            </details>
+            <details>
+              <summary>为什么同一条入口在宽带能开、手机打不开？</summary>
+              <p>常见于出口 IP 被限速或拒绝。11 月 5 日 G-13 的测试里，宽带返回 200，4G 连续超时，更换 DNS 后结果不变。这类情况证明入口可达，限制在接入侧，不能算地址失效。</p>
+            </details>
+            <details>
+              <summary>域名解析返回 NXDOMAIN 意味着什么？</summary>
+              <p>说明该域名在 DNS 里没有记录。可能是注册到期、解析记录被删、或者拼写错误。11 月 5 日 H-06 的 nslookup 结果为空并返回 NXDOMAIN，属于入口层失效，换网络没用。</p>
+            </details>
+            <details>
+              <summary>维护公告期间要把入口标成失效吗？</summary>
+              <p>本页不这么标。11 月 6 日 E-09 返回 410，首页写明 11 月 20 日恢复，状态记「维护」，不进失效名单。判断依据是公告里的恢复日期，不是响应码本身。</p>
+            </details>
+            <details>
+              <summary>浏览器缓存会导致加载不出页面吗？</summary>
+              <p>会。旧缓存里的跳转地址可能已经指向空页，强刷后恢复正常。11 月第一周出现 3 次。清理浏览器缓存和系统 DNS 缓存是两件事，分开做，否则无法判断是哪一步生效。</p>
+            </details>
+          </div>
+        </section>
+
+        <!-- 8 用户评论 -->
+        <section class="section" id="reviews" aria-labelledby="h-reviews">
+          <div class="sec-head">
+            <h2 id="h-reviews">用户评论</h2>
+            <p class="sec-note">评论只代表个人检测结果，时间与网络条件写在引用行里，便于对照。</p>
+          </div>
+          <div class="reviews">
+            <div class="review">
+              <div class="who"><span class="avatar">杭</span><span><b>杭州 · 家用宽带</b><span>11 月 8 日 10:02</span></span></div>
+              <p>按第三步入手的，数出来 A-17 有四跳，最后一跳 504。之前一直以为是入口没了，其实是第二跳换了域名没跟上。</p>
+              <span class="ref">指向：A-17 入口</span>
+            </div>
+            <div class="review">
+              <div class="who"><span class="avatar alt">深</span><span><b>深圳 · 4G</b><span>11 月 7 日 21:36</span></span></div>
+              <p>晚上测和白天差距大得离谱。C-11 白天两秒多，晚上十二秒还打不开。后来发现是高峰限速，白天再测就好了。</p>
+              <span class="ref">指向：C-11 入口</span>
+            </div>
+            <div class="review">
+              <div class="who"><span class="avatar alt2">成</span><span><b>成都 · 公司网络</b><span>11 月 6 日 15:10</span></span></div>
+              <p>E-09 我看到维护公告了，写着 11 月 20 日恢复。这类不该算失效吧，标成待复核比较合理。</p>
+              <span class="ref">指向：E-09 入口</span>
+            </div>
+            <div class="review">
+              <div class="who"><span class="avatar">武</span><span><b>武汉 · 手机热点</b><span>11 月 6 日 11:48</span></span></div>
+              <p>说实话状态表颜色有点难懂。正常和恢复用两种绿，看半天才分清。</p>
+              <span class="ref">指向：状态表图例</span>
+            </div>
+            <div class="review">
+              <div class="who"><span class="avatar alt">北</span><span><b>北京 · 校园网</b><span>11 月 5 日 20:15</span></span></div>
+              <p>H-06 换 DNS 没用，最后还是确认域名解析空了。这一步比反复刷新省事得多，早点查 nslookup 就好了。</p>
+              <span class="ref">指向：H-06 入口</span>
+            </div>
+            <div class="review">
+              <div class="who"><span class="avatar alt2">广</span><span><b>广州 · 双网对照</b><span>11 月 5 日 10:30</span></span></div>
+              <p>B-04 我这边 8 号早上确实恢复了，和表上 08:45 那条对得上。之前一度以为彻底没了。</p>
+              <span class="ref">指向：B-04 入口</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- 9 相关资讯 -->
+        <section class="section" id="news" aria-labelledby="h-news">
+          <div class="sec-head">
+            <h2 id="h-news">相关资讯</h2>
+          </div>
+          <div class="grid g2">
+            <article class="card">
+              <div class="meta"><span>11 月 7 日</span><span>平台公告</span></div>
+              <h3>短链服务更换解析域名</h3>
+              <p>一家短链服务商在 11 月 6 日发布公告，把解析域名从旧地址迁到新地址，老域名保留 302 跳转。这解释了本周第二跳异常集中的现象。</p>
+            </article>
+            <article class="card">
+              <div class="meta"><span>11 月 4 日</span><span>维护说明</span></div>
+              <h3>E-09 入口发布恢复时间</h3>
+              <p>维护页写明 11 月 20 日恢复，期间返回 410。公告页还提到数据库迁移会导致部分历史路径 404，迁完后重新生成。</p>
+            </article>
+            <article class="card">
+              <div class="meta"><span>11 月 3 日</span><span>版本差异</span></div>
+              <h3>移动端页面结构改版</h3>
+              <p>部分入口在手机端出现空白，桌面端正常。对比 10 月 27 日截图，移动端脚本加载顺序变了，首屏渲染延后约 1.4 秒。</p>
+            </article>
+            <article class="card">
+              <div class="meta"><span>11 月 1 日</span><span>方法讨论</span></div>
+              <h3>超时阈值该定几秒</h3>
+              <p>有读者提出 8 秒偏宽，建议 5 秒。用 24 条样本重算，5 秒阈值下超时记录从 9 条升到 13 条，与夜间成功率下降的时间点吻合得更好。</p>
+            </article>
+          </div>
+        </section>
+
+        <!-- 10 补充：榜单 -->
+        <section class="section" id="rank" aria-labelledby="h-rank">
+          <div class="sec-head">
+            <h2 id="h-rank">补充板块：近 30 天失效频次榜</h2>
+            <p class="sec-note">按检测记录中「失败次数 ÷ 检测次数」排序，样本量少于 3 次的不进榜。</p>
+          </div>
+          <ol class="rank">
+            <li><span class="no top">01</span><span class="nm"><b>F-21 入口</b><span>跳转从 2 层增至 4 层</span></span><span class="val">失败 6 / 9 次</span></li>
+            <li><span class="no top">02</span><span class="nm"><b>A-17 入口</b><span>第三跳 504</span></span><span class="val">失败 5 / 8 次</span></li>
+            <li><span class="no">03</span><span class="nm"><b>C-11 入口</b><span>夜间高峰超时</span></span><span class="val">失败 5 / 11 次</span></li>
+            <li><span class="no">04</span><span class="nm"><b>H-06 入口</b><span>DNS 返回 NXDOMAIN</span></span><span class="val">失败 4 / 4 次</span></li>
+            <li><span class="no">05</span><span class="nm"><b>G-13 入口</b><span>4G 出口受限</span></span><span class="val">失败 4 / 10 次</span></li>
+            <li><span class="no">06</span><span class="nm"><b>E-09 入口</b><span>维护期返回 410</span></span><span class="val">失败 3 / 6 次</span></li>
+          </ol>
+        </section>
+
+        <!-- 11 补充：判断拆解面板 -->
+        <section class="section" id="track" aria-labelledby="h-track">
+          <div class="sec-head">
+            <h2 id="h-track">判断拆解：可核对的三行证据</h2>
+            <p class="sec-note">同一结论拆成事实、回应、推测三层，各自标注来源与时间。</p>
+          </div>
+          <div class="compare">
+            <div class="left">
+              <h4>事实层（有检测记录）</h4>
+              <ul>
+                <li>11 月 8 日 09:20，A-17 第三跳返回 504，两次复测一致。</li>
+                <li>11 月 7 日 21:10，C-11 响应 12.3 秒，白天同条 2.1 秒。</li>
+                <li>11 月 5 日 09:05，H-06 nslookup 返回 NXDOMAIN。</li>
+              </ul>
+            </div>
+            <div class="right">
+              <h4>回应与推测（须标注）</h4>
+              <ul>
+                <li>短链服务商公告称迁移期间「短时不可达」，属官方回应。</li>
+                <li>D-02 解析变更原因未获说明，属转述，不能当结论。</li>
+                <li>若高峰限速持续，夜间成功率可能继续低于 40%，属推测。</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <!-- 12 相关推荐 标签索引 -->
+        <section class="section" id="tags" aria-labelledby="h-tags">
+          <div class="sec-head">
+            <h2 id="h-tags">相关推荐：按现象查</h2>
+          </div>
+          <div class="tag-index">
+            <a href="/#deep">跳转第三跳 504</a>
+            <a href="/#latest">11 月 8 日状态表</a>
+            <a href="/#faq">DNS 返回 NXDOMAIN</a>
+            <a href="/#guide">浏览器强刷步骤</a>
+            <a href="/#reviews">4G 与宽带结果相反</a>
+            <a href="/#rank">30 天失效频次</a>
+            <a href="/#news">短链服务更换域名</a>
+            <a href="/#guide">开发者工具看响应码</a>
+            <a href="/#faq">8 秒超时阈值</a>
+            <a href="/#track">事实与推测分层</a>
+            <a href="/#overview">维护页与下线区别</a>
+            <a href="/#faq">缓存导致空白页</a>
+          </div>
+        </section>
+
+      </div><!-- /main-col -->
+
+      <!-- 侧栏 -->
+      <aside class="side" aria-label="侧边导航与状态摘要">
+        <nav class="side-card" aria-labelledby="sideNavTitle">
+          <h3 id="sideNavTitle">本页导航</h3>
+          <div class="side-nav" id="sideNav">
+            <a href="/#overview">领域概览 <span>01</span></a>
+            <a href="/#featured">精选内容推荐 <span>02</span></a>
+            <a href="/#latest">最新更新 <span>03</span></a>
+            <a href="/#channels">分类入口 <span>04</span></a>
+            <a href="/#deep">深度解析 <span>05</span></a>
+            <a href="/#guide">体验指南 <span>06</span></a>
+            <a href="/#faq">常见问答 <span>07</span></a>
+            <a href="/#reviews">用户评论 <span>08</span></a>
+            <a href="/#news">相关资讯 <span>09</span></a>
+            <a href="/#rank">失效频次榜 <span>10</span></a>
+            <a href="/#track">判断拆解 <span>11</span></a>
+            <a href="/#tags">相关推荐 <span>12</span></a>
+          </div>
+        </nav>
+
+        <div class="side-card">
+          <h3>11 月 8 日状态摘要</h3>
+          <ul class="status-list">
+            <li><span>可访问</span><span class="pill pill-ok">10 条</span></li>
+            <li><span>响应超时</span><span class="pill pill-warn">9 条</span></li>
+            <li><span>跳转异常</span><span class="pill pill-bad">5 条</span></li>
+            <li><span>确认下线 / 维护</span><span class="pill pill-warn">2 条</span></li>
+            <li><span>待二次复核</span><span class="pill">3 条</span></li>
+          </ul>
+        </div>
+
+        <div class="side-card">
+          <h3>检测条件</h3>
+          <ul class="status-list">
+            <li><span>样本入口</span><span>24 条</span></li>
+            <li><span>检测次数</span><span>87 次</span></li>
+            <li><span>网络环境</span><span>宽带 + 4G</span></li>
+            <li><span>超时阈值</span><span>8 秒</span></li>
+            <li><span>复测间隔</span><span>≥15 分钟</span></li>
+          </ul>
+        </div>
+      </aside>
+
+    </div><!-- /layout -->
+  </div><!-- /wrap -->
+</main>
+
+<footer class="site-foot" id="foot">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <div class="foot-brand">
+          <svg width="34" height="34" viewBox="0 0 64 64" aria-hidden="true">
+            <rect width="64" height="64" rx="14" fill="#2f6b5c"/>
+            <path d="M14 43V22h6.4l5.6 8.6 5.6-8.6H38v21h-6v-9.6l-5 7.4h-1.6l-5-7.4V43z" fill="#f2c14e"/>
+            <path d="M43 22h9l-8 21h-6z" fill="#dfe9e2" opacity=".8"/>
+          </svg>
+          <span class="brand-txt">
+            <span class="brand-name">7086失效地址最新</span>
+            <span class="brand-sub">ADDRESS STATUS LOG</span>
+          </span>
+        </div>
+        <p class="foot-desc">用响应码、跳转层数和耗时记录每一条入口的当下状态，让「能不能打开」变成可对照的表格行。</p>
+      </div>
+
+      <div>
+        <h4>主线板块</h4>
+        <ul>
+          <li><a href="/#overview">领域概览</a></li>
+          <li><a href="/#featured">精选内容推荐</a></li>
+          <li><a href="/#latest">最新更新</a></li>
+          <li><a href="/#deep">深度解析</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4>方法工具</h4>
+        <ul>
+          <li><a href="/#guide">五步自查指南</a></li>
+          <li><a href="/#faq">常见问答</a></li>
+          <li><a href="/#track">判断拆解面板</a></li>
+          <li><a href="/#rank">失效频次榜</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4>动态与反馈</h4>
+        <ul>
+          <li><a href="/#news">相关资讯</a></li>
+          <li><a href="/#reviews">用户评论</a></li>
+          <li><a href="/#tags">相关推荐标签</a></li>
+          <li><a href="/#channels">分类入口</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="foot-note">
+      <p>数据说明：页面中的入口编号、检测时间、响应码、耗时均为演示用示例数据，不是真实服务地址，也不构成任何访问指引。所有「可用」判断仅在所列检测条件下成立。</p>
+      <p>更新对应正文可核对项：11 月 8 日 09:20 的 A-17 第三次抓包、11 月 8 日 08:45 的 B-04 恢复记录，均见「最新更新」列表首两条。</p>
+      <p>© 2026 7086失效地址最新 · 地址状态台账。内容仅供排查方法参考。</p>
+    </div>
+  </div>
+</footer>
+
+<button id="toTop" aria-label="回到页面顶部">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"/></svg>
+</button>
+
+<script>
+(function(){
+  /* 吸顶高度：公告条 + 页头 */
+  function setAnnHeight(){
+    var ann = document.getElementById('announce');
+    var head = document.querySelector('.site-head');
+    if(!ann || !head) return;
+    var total = Math.round(ann.getBoundingClientRect().height + head.getBoundingClientRect().height);
+    document.documentElement.style.setProperty('--ann-h', total + 'px');
+    document.documentElement.style.setProperty('--headTotal', total + 'px');
+  }
+  setAnnHeight();
+  window.addEventListener('resize', setAnnHeight);
+  window.addEventListener('load', setAnnHeight);
+  if(document.fonts && document.fonts.ready){ document.fonts.ready.then(setAnnHeight); }
+
+  /* 移动端菜单 */
+  var menuBtn = document.getElementById('menuBtn');
+  var headNav = document.getElementById('headNav');
+  if(menuBtn && headNav){
+    menuBtn.addEventListener('click', function(){
+      var open = headNav.classList.toggle('open');
+      menuBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+    headNav.addEventListener('click', function(e){
+      if(e.target.tagName === 'A'){
+        headNav.classList.remove('open');
+        menuBtn.setAttribute('aria-expanded','false');
+      }
+    });
+    document.addEventListener('keydown', function(e){
+      if(e.key === 'Escape' && headNav.classList.contains('open')){
+        headNav.classList.remove('open');
+        menuBtn.setAttribute('aria-expanded','false');
+        menuBtn.focus();
+      }
+    });
+  }
+
+  /* 平滑滚动，为吸顶预留偏移 */
+  document.addEventListener('click', function(e){
+    var a = e.target.closest && e.target.closest('a[href^="/#"]');
+    if(!a) return;
+    var id = a.getAttribute('href').slice(2);
+    if(!id) return;
+    var target = document.getElementById(id);
+    if(!target) return;
+    e.preventDefault();
+    var ann = document.getElementById('announce');
+    var head = document.querySelector('.site-head');
+    var offset = (ann ? ann.offsetHeight : 0) + (head ? head.offsetHeight : 0) + 8;
+    var y = target.getBoundingClientRect().top + window.pageYOffset - offset;
+    window.scrollTo({top: Math.max(y,0), behavior: 'smooth'});
+    history.replaceState(null, '', '/#' + id);
+  });
+
+  /* 侧栏滚动高亮 */
+  var sideLinks = Array.prototype.slice.call(document.querySelectorAll('#sideNav a'));
+  var sections = sideLinks.map(function(a){
+    return document.getElementById(a.getAttribute('href').slice(2));
+  }).filter(Boolean);
+
+  function highlight(){
+    var ann = document.getElementById('announce');
+    var head = document.querySelector('.site-head');
+    var offset = (ann ? ann.offsetHeight : 0) + (head ? head.offsetHeight : 0) + 40;
+    var pos = window.pageYOffset + offset;
+    var current = -1;
+    for(var i=0;i<sections.length;i++){
+      if(sections[i].offsetTop <= pos) current = i;
+    }
+    sideLinks.forEach(function(a,i){
+      a.classList.toggle('active', i === current);
+    });
+  }
+
+  /* 回到顶部 */
+  var toTop = document.getElementById('toTop');
+  function onScroll(){
+    highlight();
+    if(window.pageYOffset > 600){ toTop.classList.add('on'); }
+    else { toTop.classList.remove('on'); }
+  }
+  window.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+  toTop.addEventListener('click', function(){
+    window.scrollTo({top:0, behavior:'smooth'});
+  });
+
+  /* 本地搜索 */
+  var input = document.getElementById('siteSearch');
+  var box = document.getElementById('searchRes');
+  var data = [
+    {t:'11 月 8 日入口状态表', d:'24 条入口响应码与耗时', u:'/#latest'},
+    {t:'A-17 跳转第三跳 504', d:'11 月 8 日 09:20 复测一致', u:'/#deep'},
+    {t:'B-04 入口恢复记录', d:'11 月 8 日 08:45 连续两次 200', u:'/#latest'},
+    {t:'C-11 夜间高峰超时', d:'11 月 7 日 21:10 响应 12.3 秒', u:'/#reviews'},
+    {t:'D-02 解析地址变更', d:'11 月 7 日 16:30 由 104 段换至 172 段', u:'/#latest'},
+    {t:'E-09 维护与 410', d:'11 月 20 日恢复，暂不列入失效', u:'/#faq'},
+    {t:'F-21 跳转层数增加', d:'由 2 层变为 4 层', u:'/#rank'},
+    {t:'G-13 4G 出口受限', d:'切换 DNS 后结果不变', u:'/#faq'},
+    {t:'H-06 DNS 返回 NXDOMAIN', d:'11 月 5 日 09:05 解析为空', u:'/#overview'},
+    {t:'五步自查指南', d:'强刷、响应码、层数、换网、复测', u:'/#guide'},
+    {t:'8 秒超时阈值', d:'阈值与误判的关系', u:'/#faq'},
+    {t:'浏览器缓存造成空白页', d:'本周出现 3 次', u:'/#guide'},
+    {t:'近 30 天失效频次榜', d:'按失败次数除以检测次数排序', u:'/#rank'},
+    {t:'事实与推测分层', d:'可核对三行证据', u:'/#track'},
+    {t:'短链服务更换解析域名', d:'11 月 6 日平台公告', u:'/#news'}
+  ];
+
+  function render(){
+    if(!input || !box) return;
+    var q = input.value.trim().toLowerCase();
+    if(!q){ box.classList.remove('on'); box.innerHTML=''; return; }
+    var hits = data.filter(function(it){
+      return it.t.toLowerCase().indexOf(q) > -1 || it.d.toLowerCase().indexOf(q) > -1;
+    }).slice(0,8);
+    if(hits.length === 0){
+      box.innerHTML = '<div class="empty">没有匹配「' + q.replace(/[<>&]/g,'') + '」的条目。可试试入口编号（如 A-17）、日期（11-08）或现象词（超时、504、NXDOMAIN）。</div>';
+    } else {
+      box.innerHTML = hits.map(function(it){
+        return '<a href="' + it.u + '"><b>' + it.t + '</b><br><span style="color:#6b7772">' + it.d + '</span></a>';
+      }).join('');
+    }
+    box.classList.add('on');
+  }
+
+  if(input){
+    input.addEventListener('input', render);
+    input.addEventListener('focus', function(){ if(input.value.trim()) render(); });
+    document.addEventListener('click', function(e){
+      if(!e.target.closest || !e.target.closest('.search-box')) box.classList.remove('on');
+    });
+    box.addEventListener('click', function(e){
+      if(e.target.closest('a')){ box.classList.remove('on'); input.value=''; }
+    });
+    input.addEventListener('keydown', function(e){
+      if(e.key === 'Escape'){ box.classList.remove('on'); input.blur(); }
+    });
+  }
+})();
+</script>
+
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"WebSite",
+  "name":"7086失效地址最新",
+  "alternateName":"地址状态台账",
+  "description":"7086失效地址最新排查手册：整理地址跳转失效、链接提示异常、节点不可用的判断方法，含检测步骤、状态对照表、常见问答与本周更新记录。",
+  "inLanguage":"zh-CN"
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"FAQPage",
+  "mainEntity":[
+    {
+      "@type":"Question",
+      "name":"收到 302 之后页面空白，是地址失效了吗？",
+      "acceptedAnswer":{"@type":"Answer","text":"不一定。302 表示服务器让你去另一个地址，空白页说明第二个地址没有正常返回内容。先看第三跳的响应码：如果缺失或返回 504，属于跳转链中断；如果返回 200 但页面空白，可能是对方页面结构变了。"}
+    },
+    {
+      "@type":"Question",
+      "name":"响应时间超过多少秒才算超时？",
+      "acceptedAnswer":{"@type":"Answer","text":"本页统一按 8 秒计。低于 8 秒但不显示内容，记跳转异常；高于 8 秒无内容，记超时。这个阈值是人为设定的，方便横向比较，不是行业标准。"}
+    },
+    {
+      "@type":"Question",
+      "name":"为什么同一条入口在宽带能开、手机打不开？",
+      "acceptedAnswer":{"@type":"Answer","text":"常见于出口 IP 被限速或拒绝。宽带返回 200、4G 连续超时且更换 DNS 后结果不变，说明入口可达，限制在接入侧，不能算地址失效。"}
+    },
+    {
+      "@type":"Question",
+      "name":"域名解析返回 NXDOMAIN 意味着什么？",
+      "acceptedAnswer":{"@type":"Answer","text":"说明该域名在 DNS 里没有记录。可能是注册到期、解析记录被删、或者拼写错误。nslookup 结果为空并返回 NXDOMAIN 时，属于入口层失效，换网络没用。"}
+    },
+    {
+      "@type":"Question",
+      "name":"维护公告期间要把入口标成失效吗？",
+      "acceptedAnswer":{"@type":"Answer","text":"不这么标。返回 410 且首页写明恢复日期时，状态记维护，不进失效名单。判断依据是公告里的恢复日期，不是响应码本身。"}
+    },
+    {
+      "@type":"Question",
+      "name":"浏览器缓存会导致加载不出页面吗？",
+      "acceptedAnswer":{"@type":"Answer","text":"会。旧缓存里的跳转地址可能已经指向空页，强刷后恢复正常。清理浏览器缓存和系统 DNS 缓存是两件事，应分开做，否则无法判断是哪一步生效。"}
+    }
+  ]
+}
+</script>
+
+</body>
+                                                                                                                    </html>
